@@ -1,7 +1,20 @@
 # Changelog
 
-## 0.1.0
-- Bootstrapped HydraScope repository with Next.js, TypeScript, and Tailwind CSS.
-- Added initial project structure for app, server, graph, analysis, AI, docs, and test areas.
-- Added `GET /api/health` endpoint and server-layer health logic.
-- Added baseline Vitest and Playwright configuration with starter tests.
+## 2026-08-16
+
+### Added
+- Initial HydraScope application shell.
+- HydraDB integration layer.
+- Graph visualization.
+
+### Changed
+- None.
+
+### Fixed
+- None.
+
+### Security
+- Added server-side HydraDB credential handling.
+
+### Tests
+- Added graph connectivity tests.
