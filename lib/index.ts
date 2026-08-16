@@ -1,1 +1,2 @@
-export { HealthResponseSchema, getHealthStatus } from "@/server/health";
+export { getHydraDBAdapter, HydraDBAdapter, HydraDBClient } from "./hydra";
+export { getHealthStatus, HealthResponseSchema } from "@/server/health";

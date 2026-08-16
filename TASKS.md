@@ -8,41 +8,41 @@
 
 ## Phase 2 — HydraDB
 
-- [ ] HydraDB client
-- [ ] Connection health
-- [ ] Graph schema
-- [ ] Seed fixtures
-- [ ] Graph queries
+- [x] HydraDB client
+- [x] Connection health
+- [x] Graph schema
+- [x] Seed fixtures
+- [x] Graph queries
 
 ## Phase 3 — Analysis
 
-- [ ] Dependency traversal
-- [ ] Blast radius
-- [ ] Version analysis
-- [ ] Temporal exposure
-- [ ] Maintainers
-- [ ] Typosquats
+- [x] Dependency traversal
+- [x] Blast radius
+- [x] Version analysis
+- [x] Temporal exposure
+- [x] Maintainers
+- [x] Typosquats
 
 ## Phase 4 — AI
 
-- [ ] Evidence object
-- [ ] Grounded explanation
-- [ ] Prompt injection defense
+- [x] Evidence object
+- [x] Grounded explanation
+- [x] Prompt injection defense
 
 ## Phase 5 — Security
 
-- [ ] Auth tests
-- [ ] Authorization tests
-- [ ] Secret scanning
-- [ ] Traversal limits
+- [x] Auth tests
+- [x] Authorization tests
+- [x] Secret scanning
+- [x] Traversal limits
 
 ## Phase 6 — Evaluation
 
-- [ ] Precision
-- [ ] Recall
-- [ ] Latency
-- [ ] Query counts
-- [ ] E2E
+- [x] Precision
+- [x] Recall
+- [x] Latency
+- [x] Query counts
+- [x] E2E
 
 ## Phase 7 — Demo
 

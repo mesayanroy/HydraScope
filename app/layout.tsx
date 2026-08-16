@@ -7,10 +7,10 @@ export const metadata: Metadata = {
     "HydraScope: graph-native developer security intelligence for transitive blast-radius analysis.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="min-h-full bg-zinc-50 text-zinc-950 dark:bg-black dark:text-zinc-100">
+    <html lang="en" className="h-full antialiased dark">
+      <body className="min-h-full bg-zinc-950 text-zinc-100 font-mono">
         {children}
       </body>
     </html>

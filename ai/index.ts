@@ -1,4 +1,3 @@
-export type EvidenceBoundExplanation = {
-  summary: string;
-  evidenceNodeIds: string[];
-};
+export { generateGroundedExplanation } from "./generator";
+export type { GroundedAiExplanation } from "./generator";
+export { sanitizeUntrustedMetadata } from "./promptDefense";
