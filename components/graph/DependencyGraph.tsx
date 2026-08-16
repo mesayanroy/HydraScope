@@ -242,9 +242,10 @@ function DependencyGraphContent({ analysisResult, onSelectNode }: DependencyGrap
   }, [fitView]);
 
   return (
-    <div className="relative flex-1 min-h-[500px] sm:min-h-[560px] w-full rounded border border-zinc-800 bg-zinc-950 overflow-hidden font-mono select-none">
+    <div className="relative h-[560px] min-h-[560px] w-full rounded border border-zinc-800 bg-zinc-950 overflow-hidden font-mono select-none" style={{ height: 560, width: "100%" }}>
       {/* React Flow Canvas */}
       <ReactFlow
+        style={{ width: "100%", height: "100%" }}
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}

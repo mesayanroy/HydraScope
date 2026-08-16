@@ -159,7 +159,7 @@ export default function Home() {
       </section>
 
       {/* 3. MAIN GRAPH (React Flow Canvas) */}
-      <section className="flex-1 flex flex-col min-h-[500px]">
+      <section className="w-full h-[560px] flex flex-col">
         <DependencyGraph analysisResult={analysisResult} />
       </section>
 
