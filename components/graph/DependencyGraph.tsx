@@ -20,6 +20,18 @@ type DependencyGraphProps = {
   onSelectNode?: (nodeId: string, nodeType: string, label: string) => void;
 };
 
+type NodeDetail = {
+  id: string;
+  name: string;
+  type: string;
+  category: string;
+  version?: string;
+  relationships: string;
+  source: string;
+  timestamps: string;
+  reasonWhyNode: string;
+};
+
 const nodeTypes = {
   minimal: MinimalGraphNode,
 };
@@ -27,7 +39,7 @@ const nodeTypes = {
 function DependencyGraphContent({ analysisResult, onSelectNode }: DependencyGraphProps) {
   const { fitView, zoomIn, zoomOut } = useReactFlow();
   const [hoveredNode, setHoveredNode] = useState<{ id: string; label: string; type: string } | null>(null);
-  const [selectedNode, setSelectedNode] = useState<{ id: string; label: string; type: string; category: string } | null>(null);
+  const [selectedNode, setSelectedNode] = useState<NodeDetail | null>(null);
 
   // Compute graph nodes & edges from analysis result
   const initialGraphData = useMemo(() => {
@@ -230,7 +242,7 @@ function DependencyGraphContent({ analysisResult, onSelectNode }: DependencyGrap
   }, [fitView]);
 
   return (
-    <div className="relative flex-1 min-h-[500px] sm:min-h-[560px] w-full rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden font-mono select-none">
+    <div className="relative flex-1 min-h-[500px] sm:min-h-[560px] w-full rounded border border-zinc-800 bg-zinc-950 overflow-hidden font-mono select-none">
       {/* React Flow Canvas */}
       <ReactFlow
         nodes={nodes}
@@ -243,14 +255,52 @@ function DependencyGraphContent({ analysisResult, onSelectNode }: DependencyGrap
         }
         onNodeMouseLeave={() => setHoveredNode(null)}
         onNodeClick={(_, node) => {
+          const category = String(node.data.category);
+          const name = String(node.data.title);
+          let reasonWhyNode = "Graph node included in supply chain reverse dependency traversal.";
+          let relationships = "DEPENDS_ON / USED_BY";
+          let source = "HydraDB Graph Store";
+          let timestamps = "2026-08-16T09:00:00.000Z";
+
+          if (category === "PACKAGE") {
+            reasonWhyNode = "Target package analyzed for downstream transitive blast radius exposure.";
+            relationships = "HAS_VERSION (outgoing)";
+          } else if (category === "VERSION") {
+            reasonWhyNode = "Vulnerable package version triggering downstream reverse dependency propagation.";
+            relationships = "DEPENDS_ON (incoming), AFFECTED_BY (outgoing)";
+          } else if (category === "VULNERABILITY") {
+            reasonWhyNode = "Advisory mapped directly to package version in HydraDB graph.";
+            relationships = "AFFECTED_BY (incoming)";
+            source = "OSV Advisory Intelligence Feed";
+          } else if (category === "REPOSITORY") {
+            reasonWhyNode = "Repository declaring target package version in its dependency manifest.";
+            relationships = "USED_BY (incoming from package, outgoing to service)";
+          } else if (category === "SERVICE") {
+            reasonWhyNode = "Application service built from repository; exposed during deployment window.";
+            relationships = "USED_BY (incoming), RUNS_IN (outgoing)";
+            timestamps = "Active 09:02 to 09:06 (4 min window)";
+          } else if (category === "ENVIRONMENT") {
+            reasonWhyNode = "Production cloud environment hosting live active instances of affected service.";
+            relationships = "RUNS_IN (incoming)";
+          } else if (category === "MAINTAINER") {
+            reasonWhyNode = "Publisher/Maintainer associated with package nodes across HydraDB.";
+            relationships = "MAINTAINED_BY / PUBLISHED_BY";
+          }
+
           setSelectedNode({
             id: node.id,
-            label: String(node.data.title),
+            name,
             type: String(node.data.subtitle || node.data.category),
-            category: String(node.data.category),
+            category,
+            version: category === "VERSION" ? name : undefined,
+            relationships,
+            source,
+            timestamps,
+            reasonWhyNode,
           });
+
           if (onSelectNode) {
-            onSelectNode(node.id, node.data.category, String(node.data.title));
+            onSelectNode(node.id, category, name);
           }
         }}
         fitView
@@ -300,10 +350,10 @@ function DependencyGraphContent({ analysisResult, onSelectNode }: DependencyGrap
 
       {/* Node Detail Drawer Overlay */}
       {selectedNode && (
-        <div className="absolute right-3 top-3 w-72 rounded-lg border border-zinc-800 bg-zinc-900/95 p-4 backdrop-blur shadow-2xl space-y-3 z-20">
+        <div className="absolute right-3 top-3 w-80 rounded border border-zinc-800 bg-zinc-950/95 p-4 backdrop-blur shadow-2xl space-y-3 z-20 font-mono text-xs">
           <div className="flex justify-between items-center border-b border-zinc-800 pb-2">
-            <span className="font-bold text-xs uppercase tracking-wider text-emerald-400">
-              {selectedNode.category}
+            <span className="font-bold text-xs uppercase tracking-wider text-rose-400">
+              WHY THIS NODE?
             </span>
             <button
               onClick={() => setSelectedNode(null)}
@@ -313,16 +363,26 @@ function DependencyGraphContent({ analysisResult, onSelectNode }: DependencyGrap
             </button>
           </div>
 
-          <div className="space-y-1 text-xs">
-            <div className="font-bold text-zinc-100 text-sm break-all">{selectedNode.label}</div>
-            <div className="text-[11px] text-zinc-400">{selectedNode.type}</div>
-            <div className="text-[10px] text-zinc-500 break-all pt-1 font-mono">ID: {selectedNode.id}</div>
+          <p className="text-[11px] text-zinc-300 leading-relaxed bg-zinc-900/60 p-2 rounded border border-zinc-800">
+            {selectedNode.reasonWhyNode}
+          </p>
+
+          <div className="space-y-1.5 text-[11px] border-t border-zinc-800/80 pt-2 text-zinc-400">
+            <div>Type: <span className="text-zinc-200 font-bold">{selectedNode.type}</span></div>
+            <div>Name: <span className="text-zinc-200 font-bold">{selectedNode.name}</span></div>
+            {selectedNode.version && (
+              <div>Version: <span className="text-emerald-400 font-bold">{selectedNode.version}</span></div>
+            )}
+            <div>Relationships: <span className="text-amber-300">{selectedNode.relationships}</span></div>
+            <div>Source: <span className="text-zinc-300">{selectedNode.source}</span></div>
+            <div>Timestamps: <span className="text-zinc-400">{selectedNode.timestamps}</span></div>
+            <div className="text-[10px] text-zinc-500 pt-1 break-all">ID: {selectedNode.id}</div>
           </div>
 
           <div className="pt-2 border-t border-zinc-800 flex items-center justify-between text-[11px]">
             <button
               onClick={() => fitView({ nodes: [{ id: selectedNode.id }], duration: 500, maxZoom: 1.5 })}
-              className="px-2.5 py-1 rounded border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+              className="px-2.5 py-1 rounded border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-bold"
             >
               Focus Node
             </button>

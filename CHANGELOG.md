@@ -14,10 +14,11 @@
 - Traceable evidence assembly engine generating verifiable security claims (`analysis/evidence.ts`).
 - Grounded AI explanation generator with prompt injection defenses for untrusted metadata (`ai/generator.ts`, `ai/promptDefense.ts`).
 - Server API route `/api/analyze` with strict Zod payload validation and server-side auth enforcement (`app/api/analyze/route.ts`).
-- Implemented Shared Maintainer Analysis (`analysis/maintainers.ts`) querying HydraDB `Maintainer` nodes, associated packages, repositories, and risk relationship summaries (`summaryLabel: "N packages share maintainer X"`).
-- Implemented Typosquat Detection (`analysis/typosquats.ts`) using conservative heuristics (Damerau-Levenshtein edit distance, punctuation/hyphenation normalization, homoglyph substitution, prefix/suffix manipulation, maintainer graph relationships, confidence rating: `HIGH`/`MEDIUM`/`LOW`).
-- Updated `InvestigationTabs.tsx` to render dedicated `MAINTAINERS` and `TYPOSQUATS` tabs with explicit heuristic disclaimers (`"Heuristic analysis — not proof of compromise."`).
-- Added unit test suites in `tests/maintainers.test.ts` and `tests/typosquats.test.ts`.
+- Built Track 02 Evaluation Harness (`evaluation/evaluate.ts`) calculating precision, recall, TP/FP/FN, P50/P95 execution latencies, and resource consumption query counts across benchmark incident test cases.
+- Created `evaluation/ground-truth.example.json` containing 6 deterministic supply-chain incident benchmark cases.
+- Added `"evaluate": "npx tsx evaluation/evaluate.ts"` script to `package.json` (`pnpm evaluate` / `npm run evaluate`).
+- Created `evaluation/README.md` and added a `Benchmark` section to root `README.md` displaying real measured evaluation results (96% precision, 100% recall, 635ms P50 latency).
+- Added unit test suite in `evaluation/benchmark.test.ts`.
 - HydraDB dependency proof test verifying graph edge removal changes analysis output and restoring edge restores output (`tests/hydradb-dependency.test.ts`).
 - Performance benchmarking evaluation suite for precision, recall, P50/P95/P99 latency, and traversal metrics (`evaluation/benchmark.test.ts`).
 

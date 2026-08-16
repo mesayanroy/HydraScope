@@ -45,9 +45,9 @@ export function CommandSearchBar({
       : ["lodash@4.17.20", "express@4.18.2", "react@18.2.0", "evil-lib@2.0.0"];
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-2.5 font-mono">
       {/* Command-Style Input Box */}
-      <div className="relative flex items-center rounded-lg border border-zinc-800 bg-zinc-900/90 shadow-2xl focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500/50 transition-all overflow-hidden font-mono">
+      <div className="relative flex items-center rounded border border-zinc-800 bg-zinc-900/90 shadow-2xl focus-within:border-emerald-500/80 focus-within:ring-1 focus-within:ring-emerald-500/40 transition-all overflow-hidden">
         <div className="pl-4 pr-2 text-emerald-400 font-bold text-sm select-none">
           &gt;
         </div>
@@ -64,11 +64,11 @@ export function CommandSearchBar({
           }}
           placeholder={
             searchState === "loading"
-              ? "traversing dependency graph..."
-              : "Enter package@version"
+              ? "analyze package@version (traversing graph...)"
+              : "analyze package@version"
           }
           disabled={searchState === "loading"}
-          className="w-full bg-transparent py-3.5 pr-28 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none disabled:opacity-60"
+          className="w-full bg-transparent py-3 pr-32 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none disabled:opacity-60 font-mono"
         />
 
         <div className="absolute right-3 flex items-center space-x-2">
@@ -80,41 +80,51 @@ export function CommandSearchBar({
           )}
 
           <span className="hidden sm:inline-block rounded border border-zinc-800 bg-zinc-950 px-2 py-1 text-[10px] text-zinc-400 font-mono">
-            Ctrl + Enter
+            Cmd/Ctrl + Enter
           </span>
 
           <button
             onClick={() => onSearch()}
             disabled={searchState === "loading"}
-            className="rounded bg-emerald-600 px-4 py-1.5 text-xs font-bold text-zinc-950 hover:bg-emerald-500 disabled:opacity-50 transition-all"
+            className="rounded bg-emerald-600 px-4 py-1.5 text-xs font-bold text-zinc-950 hover:bg-emerald-500 disabled:opacity-50 transition-all uppercase"
           >
             ANALYZE
           </button>
         </div>
       </div>
 
-      {/* State Indicator & Small Example Chips */}
+      {/* Technical Status Line & Error Retry */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[11px] font-mono gap-2 px-1">
         {/* Status Line */}
         <div className="flex items-center space-x-2">
           {searchState === "idle" && (
-            <span className="text-zinc-500">&gt; Enter package@version</span>
+            <span className="text-zinc-500">&gt; Enter a package to trace its blast radius.</span>
           )}
 
           {searchState === "loading" && (
-            <span className="text-amber-400 font-bold">&gt; traversing dependency graph...</span>
+            <span className="text-amber-400 font-bold">
+              &gt; HydraDB traversing reverse dependency graph...
+            </span>
           )}
 
           {searchState === "success" && (
             <span className="text-emerald-400 font-bold">
-              &gt; {activePackageName}@{activeVersion}
+              &gt; Analyzed {activePackageName}@{activeVersion}
             </span>
           )}
 
           {searchState === "error" && (
-            <span className="text-rose-400 font-bold">
-              &gt; {errorMessage || "package not found"}
-            </span>
+            <div className="flex items-center space-x-2">
+              <span className="text-rose-400 font-bold">
+                &gt; {errorMessage || "Technical Error: Package or version graph node not found."}
+              </span>
+              <button
+                onClick={() => onSearch()}
+                className="px-2 py-0.5 rounded border border-rose-800 bg-rose-950/60 text-rose-300 hover:bg-rose-900 text-[10px] font-bold uppercase"
+              >
+                RETRY
+              </button>
+            </div>
           )}
         </div>
 

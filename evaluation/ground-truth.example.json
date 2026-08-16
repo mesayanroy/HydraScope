@@ -1,0 +1,79 @@
+[
+  {
+    "incidentId": "INCIDENT-001",
+    "packageName": "evil-lib",
+    "version": "2.0.0",
+    "ecosystem": "npm",
+    "description": "Target RCE package with direct and transitive downstream dependencies in checkout & auth microservices",
+    "groundTruthNodeIds": [
+      "pkgver:evil-lib@2.0.0",
+      "pkgver:auth-middleware@1.4.0",
+      "pkgver:payment-sdk@3.1.0",
+      "repo:checkout-repo",
+      "repo:auth-service-repo",
+      "svc:checkout-api",
+      "svc:auth-api",
+      "env:prod-us-east-1",
+      "env:staging-eu-west-1"
+    ]
+  },
+  {
+    "incidentId": "INCIDENT-002",
+    "packageName": "auth-middleware",
+    "version": "1.4.0",
+    "ecosystem": "npm",
+    "description": "Direct dependency of checkout and auth services",
+    "groundTruthNodeIds": [
+      "pkgver:auth-middleware@1.4.0",
+      "repo:checkout-repo",
+      "repo:auth-service-repo",
+      "svc:checkout-api",
+      "svc:auth-api",
+      "env:prod-us-east-1",
+      "env:staging-eu-west-1"
+    ]
+  },
+  {
+    "incidentId": "INCIDENT-003",
+    "packageName": "payment-sdk",
+    "version": "3.1.0",
+    "ecosystem": "npm",
+    "description": "Payment SDK used exclusively in checkout API service",
+    "groundTruthNodeIds": [
+      "pkgver:payment-sdk@3.1.0",
+      "repo:checkout-repo",
+      "svc:checkout-api",
+      "env:prod-us-east-1"
+    ]
+  },
+  {
+    "incidentId": "INCIDENT-004",
+    "packageName": "lodash",
+    "version": "4.17.20",
+    "ecosystem": "npm",
+    "description": "Known prototype pollution vulnerability (CVE-2020-8203 / GHSA-p6mc-m468-83gw)",
+    "groundTruthNodeIds": [
+      "pkgver:lodash@4.17.20"
+    ]
+  },
+  {
+    "incidentId": "INCIDENT-005",
+    "packageName": "express",
+    "version": "4.18.2",
+    "ecosystem": "npm",
+    "description": "Popular safe web server framework version query baseline",
+    "groundTruthNodeIds": [
+      "pkgver:express@4.18.2"
+    ]
+  },
+  {
+    "incidentId": "INCIDENT-006",
+    "packageName": "react",
+    "version": "18.2.0",
+    "ecosystem": "npm",
+    "description": "Frontend UI framework library baseline node query",
+    "groundTruthNodeIds": [
+      "pkgver:react@18.2.0"
+    ]
+  }
+]

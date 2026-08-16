@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { GroundedAiExplanation } from "@/ai";
+import { ExplanationResult } from "@/ai";
 import { FullAnalysisResult } from "@/analysis";
 import { AiExplanationPanel } from "@/components/analysis/AiExplanationPanel";
 import { CommandSearchBar } from "@/components/analysis/CommandSearchBar";
@@ -16,7 +16,7 @@ export default function Home() {
   const [searchState, setSearchState] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<FullAnalysisResult | null>(null);
-  const [aiExplanation, setAiExplanation] = useState<GroundedAiExplanation | null>(null);
+  const [aiExplanation, setAiExplanation] = useState<ExplanationResult | null>(null);
 
   const handleSearch = useCallback(
     async (targetQuery?: string) => {

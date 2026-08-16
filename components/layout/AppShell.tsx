@@ -46,7 +46,7 @@ export function AppShell({ ecosystem, onEcosystemChange, children }: AppShellPro
           <div>
             <h1 className="text-sm font-bold tracking-wider text-zinc-100 uppercase">HYDRASCOPE</h1>
             <p className="text-[11px] text-zinc-400 font-sans leading-none">
-              Supply-chain intelligence
+              graph-native supply chain intelligence
             </p>
           </div>
         </div>

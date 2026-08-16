@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { runFullAnalysis } from "@/analysis";
-import { generateGroundedExplanation } from "@/ai";
+import { getExplanationService } from "@/ai";
 import { getHydraDBAdapter } from "@/lib/hydra";
 
 const AnalyzeInputSchema = z.object({
@@ -46,8 +46,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Generate AI Explanation
-    const aiExplanation = generateGroundedExplanation(analysis);
+    // 3. Generate AI Explanation via ExplanationService (1 LLM request maximum, with deterministic fallback)
+    const aiExplanation = await getExplanationService().generateExplanation(analysis);
 
     return NextResponse.json({
       analysis,

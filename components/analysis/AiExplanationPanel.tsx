@@ -1,11 +1,11 @@
 "use client";
 
-import { GroundedAiExplanation } from "@/ai";
+import { ExplanationResult, getExplanationService } from "@/ai";
 import { FullAnalysisResult } from "@/analysis";
 
 type AiExplanationPanelProps = {
   analysis: FullAnalysisResult | null;
-  aiExplanation: GroundedAiExplanation | null;
+  aiExplanation?: ExplanationResult | null;
 };
 
 export function AiExplanationPanel({ analysis, aiExplanation }: AiExplanationPanelProps) {
@@ -17,18 +17,21 @@ export function AiExplanationPanel({ analysis, aiExplanation }: AiExplanationPan
           <span className="font-bold uppercase tracking-wider text-purple-300">Why is this dangerous?</span>
         </div>
         <p className="text-[11px] leading-relaxed text-zinc-400">
-          Select or analyze a package to generate deterministic security findings and AI explanation insights.
+          Submit a package@version query to generate evidence-grounded security explanation insights.
         </p>
       </div>
     );
   }
 
+  // Fallback to deterministic ExplanationService if props is empty
+  const explanation: ExplanationResult =
+    aiExplanation || getExplanationService().generateDeterministicExplanation(analysis);
+
   const isVuln = analysis.vulnerabilities.status === "VULNERABLE";
-  const mainAdv = analysis.vulnerabilities.advisories[0];
 
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs space-y-3 shadow-xl">
-      {/* Header */}
+    <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs space-y-4 shadow-xl">
+      {/* Panel Header */}
       <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
         <div className="flex items-center space-x-2">
           <span className="h-2 w-2 rounded-full bg-purple-400 animate-pulse" />
@@ -36,12 +39,12 @@ export function AiExplanationPanel({ analysis, aiExplanation }: AiExplanationPan
             Why is this dangerous?
           </h3>
         </div>
-        <span className="text-[10px] text-zinc-500 border border-zinc-800 rounded px-1.5 py-0.5">
-          EVIDENCE-GROUNDED AI
+        <span className="text-[10px] text-zinc-400 border border-zinc-800 rounded px-1.5 py-0.5">
+          {explanation.isAiGenerated ? "AI GENERATED" : "HYDRA EVIDENCE"}
         </span>
       </div>
 
-      {/* Primary Security Finding */}
+      {/* 1. What happened? */}
       <div
         className={`p-3 rounded border text-xs leading-relaxed ${
           isVuln
@@ -49,65 +52,60 @@ export function AiExplanationPanel({ analysis, aiExplanation }: AiExplanationPan
             : "border-zinc-800 bg-zinc-900/60 text-zinc-300"
         }`}
       >
-        <span className="font-bold text-zinc-100 block mb-1">
-          {analysis.packageName}@{analysis.version}
+        <span className="font-bold text-zinc-100 uppercase text-[10px] tracking-wider block mb-1">
+          1. What happened?
         </span>
-        {aiExplanation?.summary ||
-          (isVuln
-            ? `Critical vulnerability ${mainAdv?.advisoryId || ""} (${mainAdv?.severity || ""}) detected in graph.`
-            : "No active critical vulnerabilities recorded in graph for this version.")}
+        <p className="text-[11px] leading-relaxed">{explanation.whatHappened}</p>
       </div>
 
-      {/* Attack Paths Walkthrough */}
-      {aiExplanation && aiExplanation.attackPathWalkthrough.length > 0 && (
-        <div className="space-y-1.5">
-          <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-bold">
-            Transitive Attack Vector
-          </span>
-          <div className="space-y-1.5">
-            {aiExplanation.attackPathWalkthrough.map((path, idx) => (
-              <div
-                key={idx}
-                className="p-2 rounded border border-zinc-800 bg-zinc-900/70 text-[11px] text-zinc-300 font-mono break-all"
-              >
-                {path}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* 2. What is affected? */}
+      <div className="space-y-1">
+        <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-bold">
+          2. What is affected?
+        </span>
+        <p className="text-[11px] text-zinc-300 bg-zinc-900/60 p-2.5 rounded border border-zinc-800 leading-relaxed">
+          {explanation.whatIsAffected}
+        </p>
+      </div>
 
-      {/* Temporal Active Exposure Timeline */}
-      {aiExplanation?.exposureExplanation && (
-        <div className="space-y-1">
-          <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-bold">
-            Exposure Assessment
-          </span>
-          <p className="text-[11px] text-zinc-300 bg-zinc-900/60 p-2 rounded border border-zinc-800">
-            {aiExplanation.exposureExplanation}
-          </p>
-        </div>
-      )}
+      {/* 3. Why is it affected? */}
+      <div className="space-y-1">
+        <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-bold">
+          3. Why is it affected?
+        </span>
+        <p className="text-[11px] text-zinc-300 bg-zinc-900/60 p-2.5 rounded border border-zinc-800 leading-relaxed">
+          {explanation.whyIsItAffected}
+        </p>
+      </div>
 
-      {/* Recommended Remediation Steps */}
-      {aiExplanation && aiExplanation.investigationSteps.length > 0 && (
-        <div className="space-y-1.5 pt-1 border-t border-zinc-800">
-          <span className="text-[10px] text-emerald-400 uppercase tracking-wider block font-bold">
-            Actionable Remediation
-          </span>
-          <ul className="space-y-1 text-[11px] text-zinc-300">
-            {aiExplanation.investigationSteps.map((step, idx) => (
-              <li key={idx} className="flex items-start space-x-1.5">
-                <span className="text-emerald-400 select-none">›</span>
-                <span>{step}</span>
-              </li>
-            ))}
-          </ul>
+      {/* 4. What is the highest-risk path? */}
+      <div className="space-y-1">
+        <span className="text-[10px] text-amber-400 uppercase tracking-wider block font-bold">
+          4. What is the highest-risk path?
+        </span>
+        <div className="p-2.5 rounded border border-zinc-800 bg-zinc-900/80 text-[11px] text-zinc-200 font-mono break-all leading-relaxed">
+          {explanation.highestRiskPath}
         </div>
-      )}
+      </div>
 
-      <div className="text-[10px] text-zinc-500 pt-1 text-right">
-        Determined from {analysis.evidence.length} graph evidence nodes
+      {/* 5. What should the developer investigate first? */}
+      <div className="space-y-1.5 pt-1 border-t border-zinc-800">
+        <span className="text-[10px] text-emerald-400 uppercase tracking-wider block font-bold">
+          5. What should the developer investigate first?
+        </span>
+        <ul className="space-y-1.5 text-[11px] text-zinc-300">
+          {explanation.whatToInvestigateFirst.map((item, idx) => (
+            <li key={idx} className="flex items-start space-x-1.5 bg-zinc-900/40 p-1.5 rounded border border-zinc-800/80">
+              <span className="text-emerald-400 font-bold select-none">›</span>
+              <span className="leading-normal">{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Footer Label */}
+      <div className="text-[10px] text-zinc-500 pt-2 border-t border-zinc-900 text-right font-mono italic">
+        {explanation.footerLabel}
       </div>
     </div>
   );
