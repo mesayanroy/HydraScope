@@ -16,3 +16,22 @@
 
 ## Initial Endpoint
 - `GET /api/health` returns service health payload.
+
+Next.js
+   │
+   ├── UI
+   │
+   ├── API
+   │
+   ├── Analysis Engine
+   │       │
+   │       ├── Blast Radius
+   │       ├── Temporal Exposure
+   │       ├── Maintainers
+   │       └── Typosquats
+   │
+   ├── Evidence Layer
+   │
+   ├── AI Explanation
+   │
+   └── HydraDB
