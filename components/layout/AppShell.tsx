@@ -1,6 +1,7 @@
 "use client";
 
 import { PropsWithChildren, useEffect, useState } from "react";
+import { HydraLogo } from "../ui/HydraLogo";
 
 type AppShellProps = PropsWithChildren<{
   ecosystem: "npm" | "pypi";
@@ -38,18 +39,18 @@ export function AppShell({ ecosystem, onEcosystemChange, children }: AppShellPro
     <div className="min-h-screen bg-zinc-950 text-zinc-100 font-mono flex flex-col selection:bg-zinc-800 selection:text-zinc-100">
       {/* TOP BAR HEADER */}
       <header className="border-b border-zinc-800/80 bg-zinc-950/95 px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md">
-        {/* Left Side */}
-        <div className="flex items-center space-x-3">
-          <div className="h-5 w-5 bg-emerald-500 rounded-sm flex items-center justify-center text-xs font-bold text-zinc-950">
-            H
-          </div>
+        {/* Left Side: Brand Logo & Title */}
+        <a href="/" className="flex items-center space-x-3 group">
+          <HydraLogo size={28} />
           <div>
-            <h1 className="text-sm font-bold tracking-wider text-zinc-100 uppercase">HYDRASCOPE</h1>
+            <h1 className="text-sm font-bold tracking-wider text-zinc-100 uppercase">
+              HYDRA<span className="text-rose-500 font-bold">SCOPE</span>
+            </h1>
             <p className="text-[11px] text-zinc-400 font-sans leading-none">
               graph-native supply chain intelligence
             </p>
           </div>
-        </div>
+        </a>
 
         {/* Right Side */}
         <div className="flex items-center space-x-3 sm:space-x-4">
