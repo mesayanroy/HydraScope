@@ -53,12 +53,13 @@ export function LandingHeader({ onOpenDocsModal }: LandingHeaderProps) {
 
           <Link
             href="/analyzer"
-            className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-mono font-bold shadow-sm hover:shadow transition-all"
+            aria-label="Launch Dashboard"
+            title="Launch Dashboard"
+            className="inline-flex items-center justify-center space-x-1.5 px-2.5 py-2 sm:px-3.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-mono font-bold shadow-sm hover:shadow transition-all"
           >
-            <Terminal className="w-3.5 h-3.5" />
-            <span className="hidden xs:inline">LAUNCH DASHBOARD</span>
-            <span className="xs:hidden">DASHBOARD</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <Terminal className="w-4 h-4" />
+            <span className="hidden sm:inline">LAUNCH DASHBOARD</span>
+            <ArrowRight className="w-3.5 h-3.5 hidden sm:inline" />
           </Link>
 
           {/* Mobile Menu Button */}
