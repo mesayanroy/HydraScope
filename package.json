@@ -8,8 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "test:all": "vitest run",
+    "test:security": "vitest run security-tests/",
+    "test:evaluation": "npx tsx evaluation/evaluate.ts",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "benchmark": "npx tsx evaluation/evaluate.ts",
     "seed": "npx tsx scripts/seed.ts",
     "evaluate": "npx tsx evaluation/evaluate.ts"
   },

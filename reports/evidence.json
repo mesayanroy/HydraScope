@@ -1,0 +1,26 @@
+[
+  {
+    "evidenceId": "HYDRA-EV-001",
+    "source": "HydraDB Graph Store",
+    "claim": "checkout-api is affected by transitive dependency evil-lib@2.0.0 via auth-middleware@1.4.0",
+    "nodeId": "svc:checkout-api",
+    "relationship": "USED_BY",
+    "pathString": "evil-lib@2.0.0 ➔ auth-middleware@1.4.0 ➔ org/checkout-service ➔ checkout-api ➔ prod-us-east-1"
+  },
+  {
+    "evidenceId": "HYDRA-EV-002",
+    "source": "HydraDB Maintainer Subgraph",
+    "claim": "Maintainer @evil-actor co-maintains crypto-helper-utils alongside evil-lib",
+    "nodeId": "m:evil-actor",
+    "relationship": "MAINTAINED_BY",
+    "pathString": "evil-actor ➔ [evil-lib, crypto-helper-utils]"
+  },
+  {
+    "evidenceId": "HYDRA-EV-003",
+    "source": "HydraDB Temporal Engine",
+    "claim": "Service checkout-api was active during the 4 minute publication window of GHSA-evil-2026-9999",
+    "nodeId": "svc:checkout-api",
+    "relationship": "RUNS_IN",
+    "pathString": "Vulnerability GHSA-evil-2026-9999 (09:00 - Present) ∩ checkout-api (09:02 - 09:06) = 4 min exposure"
+  }
+]

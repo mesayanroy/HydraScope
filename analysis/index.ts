@@ -1,5 +1,6 @@
 import { HydraDBClient } from "../lib/hydra/client";
 import { BlastRadiusResult, calculateBlastRadius } from "./blastRadius";
+export type { EvidenceItem };
 import { EvidenceItem, assembleEvidence } from "./evidence";
 import { MaintainerAnalysisResult, analyzeMaintainers } from "./maintainers";
 import { TemporalAnalysisResult, analyzeTemporalExposureForServices } from "./temporal";

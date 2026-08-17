@@ -4,7 +4,7 @@ export function sanitizeUntrustedMetadata(input?: string): string {
   // Strip system prompt injection attempts, hidden markdown directives, or control instructions
   let clean = input
     .replace(/\[\s*(?:system|user|assistant|instruction|override)\s*:.*?\]/gi, "[REDACTED_METADATA_INSTRUCTION]")
-    .replace(/(?:ignore|forget|override|bypass)\s+(?:previous|all|system)\s+instructions?/gi, "[REDACTED_INJECTION_ATTEMPT]")
+    .replace(/(?:ignore|forget|override|bypass)\s+(?:all\s+)?(?:previous\s+)?(?:system\s+)?instructions?/gi, "[REDACTED_INJECTION_ATTEMPT]")
     .replace(/system\s*:\s*/gi, "metadata: ")
     .replace(/```[\s\S]*?```/g, "[CODE_BLOCK_REDACTED]");
 
