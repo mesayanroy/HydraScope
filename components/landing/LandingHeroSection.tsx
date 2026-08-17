@@ -20,12 +20,6 @@ export function LandingHeroSection({ onOpenDocsModal }: LandingHeroSectionProps)
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Hero Copy & CTA */}
           <div className="lg:col-span-7 space-y-6">
-            {/* Hackathon Track Badge */}
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-mono font-bold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>HYDRADB POWERED • TRACK 02 SUPPLY-CHAIN INTELLIGENCE</span>
-            </div>
-
             {/* Main Headline with Highlighter Text */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight text-zinc-900 dark:text-zinc-50 leading-[1.1]">
               Detect <HighlighterText>transitive blast radius</HighlighterText> with graph-native intelligence.
