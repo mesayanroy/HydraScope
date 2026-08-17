@@ -180,11 +180,42 @@ export class HydraDBClient {
 
   public async getNode(id: string): Promise<GraphNode | null> {
     this.queryCounter++;
+    if (this.isLiveConfigured) {
+      try {
+        const response = await fetch(`${this.endpoint}/api/v1/nodes/${encodeURIComponent(id)}`, {
+          headers: { Authorization: `Bearer ${this.apiKey}` },
+          signal: AbortSignal.timeout(3000),
+        });
+        if (response.ok) {
+          const liveNode = await response.json();
+          if (liveNode && liveNode.id) return liveNode;
+        }
+      } catch {
+        // Fallback to local FixtureGraph
+      }
+    }
     return this.nodesMap.get(id) || null;
   }
 
   public async findPackage(name: string): Promise<GraphNode | null> {
     this.queryCounter++;
+    if (this.isLiveConfigured) {
+      try {
+        const response = await fetch(
+          `${this.endpoint}/api/v1/packages/search?name=${encodeURIComponent(name)}`,
+          {
+            headers: { Authorization: `Bearer ${this.apiKey}` },
+            signal: AbortSignal.timeout(3000),
+          },
+        );
+        if (response.ok) {
+          const liveNode = await response.json();
+          if (liveNode && liveNode.id) return liveNode;
+        }
+      } catch {
+        // Fallback to local FixtureGraph
+      }
+    }
     const targetId = `pkg:${name.toLowerCase()}`;
     if (this.nodesMap.has(targetId)) {
       return this.nodesMap.get(targetId)!;
@@ -199,6 +230,23 @@ export class HydraDBClient {
 
   public async findPackageVersion(packageName: string, version: string): Promise<GraphNode | null> {
     this.queryCounter++;
+    if (this.isLiveConfigured) {
+      try {
+        const response = await fetch(
+          `${this.endpoint}/api/v1/package-versions?package=${encodeURIComponent(packageName)}&version=${encodeURIComponent(version)}`,
+          {
+            headers: { Authorization: `Bearer ${this.apiKey}` },
+            signal: AbortSignal.timeout(3000),
+          },
+        );
+        if (response.ok) {
+          const liveNode = await response.json();
+          if (liveNode && liveNode.id) return liveNode;
+        }
+      } catch {
+        // Fallback to local FixtureGraph
+      }
+    }
     const targetId = `pkgver:${packageName.toLowerCase()}@${version}`;
     if (this.nodesMap.has(targetId)) {
       return this.nodesMap.get(targetId)!;
@@ -225,6 +273,12 @@ export class HydraDBClient {
 
   public async removeEdge(edgeId: string): Promise<boolean> {
     this.queryCounter++;
+    if (this.isLiveConfigured) {
+      fetch(`${this.endpoint}/api/v1/edges/${encodeURIComponent(edgeId)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${this.apiKey}` },
+      }).catch(() => {});
+    }
     const edge = this.edgesMap.get(edgeId);
     if (!edge) return false;
 
@@ -240,16 +294,61 @@ export class HydraDBClient {
 
   public async getAllNodes(): Promise<GraphNode[]> {
     this.queryCounter++;
+    if (this.isLiveConfigured) {
+      try {
+        const response = await fetch(`${this.endpoint}/api/v1/nodes`, {
+          headers: { Authorization: `Bearer ${this.apiKey}` },
+          signal: AbortSignal.timeout(3000),
+        });
+        if (response.ok) {
+          const liveNodes = await response.json();
+          if (Array.isArray(liveNodes)) return liveNodes;
+        }
+      } catch {
+        // Fallback to local FixtureGraph
+      }
+    }
     return Array.from(this.nodesMap.values());
   }
 
   public async getAllEdges(): Promise<GraphEdge[]> {
     this.queryCounter++;
+    if (this.isLiveConfigured) {
+      try {
+        const response = await fetch(`${this.endpoint}/api/v1/edges`, {
+          headers: { Authorization: `Bearer ${this.apiKey}` },
+          signal: AbortSignal.timeout(3000),
+        });
+        if (response.ok) {
+          const liveEdges = await response.json();
+          if (Array.isArray(liveEdges)) return liveEdges;
+        }
+      } catch {
+        // Fallback to local FixtureGraph
+      }
+    }
     return Array.from(this.edgesMap.values());
   }
 
   public async getEdgesFrom(nodeId: string): Promise<GraphEdge[]> {
     this.queryCounter++;
+    if (this.isLiveConfigured) {
+      try {
+        const response = await fetch(
+          `${this.endpoint}/api/v1/nodes/${encodeURIComponent(nodeId)}/outgoing`,
+          {
+            headers: { Authorization: `Bearer ${this.apiKey}` },
+            signal: AbortSignal.timeout(3000),
+          },
+        );
+        if (response.ok) {
+          const liveEdges = await response.json();
+          if (Array.isArray(liveEdges)) return liveEdges;
+        }
+      } catch {
+        // Fallback to local FixtureGraph
+      }
+    }
     const edgeIds = this.outgoingEdges.get(nodeId);
     if (!edgeIds) return [];
     return Array.from(edgeIds).map((id) => this.edgesMap.get(id)!);
@@ -257,6 +356,23 @@ export class HydraDBClient {
 
   public async getEdgesTo(nodeId: string): Promise<GraphEdge[]> {
     this.queryCounter++;
+    if (this.isLiveConfigured) {
+      try {
+        const response = await fetch(
+          `${this.endpoint}/api/v1/nodes/${encodeURIComponent(nodeId)}/incoming`,
+          {
+            headers: { Authorization: `Bearer ${this.apiKey}` },
+            signal: AbortSignal.timeout(3000),
+          },
+        );
+        if (response.ok) {
+          const liveEdges = await response.json();
+          if (Array.isArray(liveEdges)) return liveEdges;
+        }
+      } catch {
+        // Fallback to local FixtureGraph
+      }
+    }
     const edgeIds = this.incomingEdges.get(nodeId);
     if (!edgeIds) return [];
     return Array.from(edgeIds).map((id) => this.edgesMap.get(id)!);

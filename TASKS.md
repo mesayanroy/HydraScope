@@ -46,7 +46,7 @@
 
 ## Phase 7 — Demo
 
-- [ ] Production deployment
-- [ ] README
-- [ ] Screenshots
-- [ ] Demo recording
+- [x] Production deployment (Vercel)
+- [x] README & Hackathon Documentation
+- [x] Screenshots & Walkthrough Artifacts
+- [x] Browser Walkthrough & Demo Recording

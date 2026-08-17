@@ -203,7 +203,7 @@ OPENAI_API_KEY=your-openai-api-key-here
 
 ## Live Demo
 
-- **Hosted Demo Application**: `https://hydrascope.demo.app` *(Placeholder URL)*
+- **Hosted Demo Application**: [https://hydrascope.vercel.app](https://hydrascope.vercel.app)
 - **Demo Query**: `evil-lib@2.0.0` or `auth-middleware@1.4.0`
 
 ---
@@ -264,4 +264,4 @@ AGGREGATE BENCHMARK METRICS SUMMARY:
 
 ## License
 
-[MIT License](file:///c:/Users/SAYAN/HydraScope/LICENSE) © 2026 Sayan Roy & HydraScope Contributors.
+[MIT License](./LICENSE) © 2026 Sayan Roy & HydraScope Contributors.

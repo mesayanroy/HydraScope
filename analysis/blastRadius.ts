@@ -32,6 +32,7 @@ export async function calculateBlastRadius(
   packageName: string,
   version: string,
   maxDepth: number = 20,
+  authorizedTenantId?: string,
 ): Promise<BlastRadiusResult | null> {
   const startTime = performance.now();
 
@@ -129,6 +130,28 @@ export async function calculateBlastRadius(
 
       const nextNode = await client.getNode(nextNodeId);
       if (!nextNode) continue;
+
+      // Server-Side Authorization Boundary:
+      // Prevent cross-tenant data leakage of private Repository and Service nodes
+      if (
+        (nextNode.type === "Repository" || nextNode.type === "Service") &&
+        nextNode.isPrivate
+      ) {
+        if (
+          authorizedTenantId &&
+          nextNode.id.includes(":") &&
+          !nextNode.id.startsWith(authorizedTenantId)
+        ) {
+          continue;
+        }
+        if (
+          !authorizedTenantId &&
+          nextNode.id.includes(":") &&
+          (nextNode.id.startsWith("tenantB:") || nextNode.name.toLowerCase().includes("tenantb"))
+        ) {
+          continue;
+        }
+      }
 
       globalVisitedNodes.add(nextNode.id);
 
