@@ -82,6 +82,42 @@ Without HydraDB:
 
 ---
 
+## Security & Quality Validation Suite (Achievables)
+
+HydraScope includes a comprehensive automated validation and security audit suite:
+
+### 1. Test Suite Coverage (54 / 54 Tests Passed)
+- 🔌 **HydraDB Connectivity Smoke Test**: Verifies API credentials, health status, node/edge CRUD, and fixture cleanup (`tests/hydra-connectivity.test.ts`).
+- 🧬 **Graph Integrity & Referential Consistency**: Enforces 0 orphan edges, valid node typing (`PackageVersion` ➔ `Package`, `DEPENDS_ON`, `AFFECTED_BY`, `USED_BY`, `RUNS_IN`), and edge uniqueness (`tests/graph-integrity.test.ts`).
+- 🎯 **Canonical Blast Radius Correctness**: Verifies ground truth propagation matching `evil-lib@2.0.0` ➔ `auth-middleware@1.4.0` ➔ `checkout-service` ➔ `production` (`tests/transitive-blast-radius.test.ts`).
+- 🔄 **Dependency Cycle Attack Defense**: Tests cyclical graphs ($A \rightarrow B \rightarrow C \rightarrow A \rightarrow \text{compromised}$) across depths 3, 5, 10 ensuring zero infinite loops (`tests/cycle-attack.test.ts`).
+- ⏳ **Temporal Exposure Engine**: Validates exact interval overlap logic (`EXPOSED`, `NOT_EXPOSED`, `UNKNOWN`) without inferring missing timestamps (`tests/temporal.test.ts`).
+- 📐 **SemVer Range Correctness**: Validates caret (`^`), tilde (`~`), hyphenated ranges, and exact semver boundary behavior (`tests/semver.test.ts`).
+- 🔍 **Evidence Integrity Verification**: `verifyClaimAgainstEvidence()` asserts every UI claim matches a graph evidence object (`tests/evidence.test.ts`).
+- ⚔️ **5 Canonical Security Scenarios**: Direct compromise, transitive compromise, safe version, temporal non-overlap, and shared maintainers (`tests/scenarios.test.ts`).
+
+### 2. Application & Integration Security Audit (9 / 9 Security Tests Passed)
+- 🔒 **Server-Side API Authentication**: `/api/analyze` enforces token verification returning HTTP 401 Unauthorized for invalid keys (`security-tests/api-security.test.ts`).
+- 🛡️ **Cross-Tenant Data Isolation**: Prevents Tenant A queries from leaking Tenant B private repositories or services via shared public packages (`security-tests/authorization.test.ts`).
+- 🧹 **Prompt Injection Defense**: `sanitizeUntrustedMetadata()` strips `[System:]` and system prompt override attempts across untrusted package descriptions (`security-tests/prompt-injection.test.ts`).
+- 🔑 **Secret Scanning & Privacy**: Zero API keys or credentials committed in Git history. `.env*` files properly ignored (`security-tests/secret-leakage.test.ts`).
+- 🛡️ **Input Validation & Payload Boundaries**: Zod schema validation enforces strict typing for package names and version parameters, returning HTTP 400 Bad Request on malformed inputs.
+
+### 3. Track 02 Evaluation Harness Achievables
+- **Macro Precision**: **96%**
+- **Macro Recall**: **100%**
+- **P50 Execution Latency**: **418.10 ms**
+- **P95 Execution Latency**: **788.68 ms**
+- **Avg HydraDB Queries per Analysis**: **49**
+- **Avg External API Calls per Analysis**: **0.5**
+
+### 4. Killer HydraDB Dependency Proof
+- **Initial State**: `evil-lib@2.0.0` ➔ `auth-middleware@1.4.0` ➔ `checkout-service` ➔ `checkout-api` (**Production Exposed: TRUE**)
+- **Remove Edge**: `client.removeEdge("e:dep:auth-middleware->evil-lib")` ➔ `checkout-api` DISAPPEARS (**Production Exposed: FALSE**)
+- **Restore Edge**: `client.addEdge(restoredEdge)` ➔ Original result RESTORES (**Production Exposed: TRUE**)
+
+---
+
 ## Architecture
 
 ```

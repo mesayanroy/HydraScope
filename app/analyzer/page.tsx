@@ -9,6 +9,9 @@ import { InvestigationTabs } from "@/components/analysis/InvestigationTabs";
 import { MetricStrip } from "@/components/analysis/MetricStrip";
 import { DependencyGraph } from "@/components/graph/DependencyGraph";
 import { AppShell } from "@/components/layout/AppShell";
+import { Network, FileText, Brain, LayoutGrid } from "lucide-react";
+
+type MobileTab = "all" | "graph" | "tabs" | "ai";
 
 export default function AnalyzerPage() {
   const [ecosystem, setEcosystem] = useState<"npm" | "pypi">("npm");
@@ -17,6 +20,7 @@ export default function AnalyzerPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<FullAnalysisResult | null>(null);
   const [aiExplanation, setAiExplanation] = useState<ExplanationResult | null>(null);
+  const [mobileTab, setMobileTab] = useState<MobileTab>("all");
 
   const handleSearch = useCallback(
     async (targetQuery?: string) => {
@@ -150,30 +154,78 @@ export default function AnalyzerPage() {
         </section>
       )}
 
-      {/* 2. STAT ROW (REPOS | SERVICES | PRODUCTION | ATTACK PATHS) */}
-      <section>
-        <MetricStrip
-          blastRadius={analysisResult?.blastRadius || null}
-          vulnerabilityStatus={analysisResult?.vulnerabilities.status || "UNKNOWN"}
-        />
+      {/* MOBILE NATIVE APP VIEW SEGMENTED CONTROLLER */}
+      <section className="lg:hidden flex items-center justify-between p-1 rounded-lg border border-zinc-800 bg-zinc-900 font-mono text-xs">
+        <button
+          onClick={() => setMobileTab("all")}
+          className={`flex-1 flex items-center justify-center space-x-1 py-1.5 rounded transition-colors ${
+            mobileTab === "all" ? "bg-zinc-800 text-emerald-400 font-bold" : "text-zinc-400"
+          }`}
+        >
+          <LayoutGrid className="w-3.5 h-3.5" />
+          <span>ALL</span>
+        </button>
+        <button
+          onClick={() => setMobileTab("graph")}
+          className={`flex-1 flex items-center justify-center space-x-1 py-1.5 rounded transition-colors ${
+            mobileTab === "graph" ? "bg-zinc-800 text-emerald-400 font-bold" : "text-zinc-400"
+          }`}
+        >
+          <Network className="w-3.5 h-3.5" />
+          <span>GRAPH</span>
+        </button>
+        <button
+          onClick={() => setMobileTab("tabs")}
+          className={`flex-1 flex items-center justify-center space-x-1 py-1.5 rounded transition-colors ${
+            mobileTab === "tabs" ? "bg-zinc-800 text-emerald-400 font-bold" : "text-zinc-400"
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          <span>TABS</span>
+        </button>
+        <button
+          onClick={() => setMobileTab("ai")}
+          className={`flex-1 flex items-center justify-center space-x-1 py-1.5 rounded transition-colors ${
+            mobileTab === "ai" ? "bg-zinc-800 text-rose-400 font-bold" : "text-zinc-400"
+          }`}
+        >
+          <Brain className="w-3.5 h-3.5" />
+          <span>AI</span>
+        </button>
       </section>
 
+      {/* 2. STAT ROW (REPOS | SERVICES | PRODUCTION | ATTACK PATHS) */}
+      {(mobileTab === "all" || mobileTab === "graph") && (
+        <section>
+          <MetricStrip
+            blastRadius={analysisResult?.blastRadius || null}
+            vulnerabilityStatus={analysisResult?.vulnerabilities.status || "UNKNOWN"}
+          />
+        </section>
+      )}
+
       {/* 3. MAIN GRAPH (React Flow Canvas) */}
-      <section className="w-full h-[560px] flex flex-col">
-        <DependencyGraph analysisResult={analysisResult} />
-      </section>
+      {(mobileTab === "all" || mobileTab === "graph") && (
+        <section className="w-full h-[400px] sm:h-[560px] flex flex-col">
+          <DependencyGraph analysisResult={analysisResult} />
+        </section>
+      )}
 
       {/* 4. BELOW GRAPH: COMPACT TABS + RIGHT-SIDE AI EXPLANATION PANEL */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left 7 Columns: Compact Tabs (EXPOSURE, MAINTAINERS, TYPOSQUATS, EVIDENCE) */}
-        <div className="lg:col-span-7">
-          <InvestigationTabs analysis={analysisResult} />
-        </div>
+        {(mobileTab === "all" || mobileTab === "tabs") && (
+          <div className="lg:col-span-7">
+            <InvestigationTabs analysis={analysisResult} />
+          </div>
+        )}
 
         {/* Right 5 Columns: Compact AI Explanation Panel ("Why is this dangerous?") */}
-        <div className="lg:col-span-5">
-          <AiExplanationPanel analysis={analysisResult} aiExplanation={aiExplanation} />
-        </div>
+        {(mobileTab === "all" || mobileTab === "ai") && (
+          <div className="lg:col-span-5">
+            <AiExplanationPanel analysis={analysisResult} aiExplanation={aiExplanation} />
+          </div>
+        )}
       </section>
     </AppShell>
   );

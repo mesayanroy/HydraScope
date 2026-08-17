@@ -68,7 +68,7 @@ export function CommandSearchBar({
               : "analyze package@version"
           }
           disabled={searchState === "loading"}
-          className="w-full bg-transparent py-3 pr-32 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none disabled:opacity-60 font-mono"
+          className="w-full bg-transparent py-3 pr-24 sm:pr-32 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none disabled:opacity-60 font-mono"
         />
 
         <div className="absolute right-3 flex items-center space-x-2">
